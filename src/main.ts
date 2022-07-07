@@ -56,13 +56,14 @@ function getSearchedBreweries () {
 }
 
 function renderHeader () {
+  let mainEl = document.querySelector('main')
+  if (mainEl === null) return
+
   let titleEl = document.createElement('h1')
   titleEl.textContent = 'List of Breweries'
 
   let searchBarHeader = document.createElement('header')
   searchBarHeader.className = 'search-bar'
-
-  searchBarHeader.append(titleEl)
 
   let searchBreweriesForm = document.createElement('form')
   searchBreweriesForm.id = 'search-breweries-form'
@@ -95,7 +96,7 @@ function renderHeader () {
   searchBreweriesForm.append(searchBreweriesLabel, searchBreweriesInput)
   searchBarHeader.append(searchBreweriesForm)
 
-  return searchBarHeader
+  mainEl.append(titleEl, searchBarHeader)
 }
 
 function createMessageH2 (text: string) {
@@ -107,11 +108,14 @@ function createMessageH2 (text: string) {
 }
 
 function renderBreweryList () {
+  let mainEl = document.querySelector('main')
+  if (mainEl === null) return
+
   if (state.breweries.length === 0) {
     let messageEl = createMessageH2(
       `No breweries found for ${state.search} in ${state.USState}.`
     )
-    return messageEl
+    mainEl.append(messageEl)
   } else {
     let articleEl = document.createElement('article')
 
@@ -124,7 +128,7 @@ function renderBreweryList () {
     }
 
     articleEl.append(breweriesUl)
-    return articleEl
+    mainEl.append(articleEl)
   }
 }
 
@@ -206,16 +210,15 @@ function render () {
   if (mainEl === null) return
   mainEl.textContent = ''
 
-  let headerEl = renderHeader()
-  let listEl = renderBreweryList()
-
-  mainEl.append(headerEl, listEl)
+  renderHeader()
+  renderBreweryList()
 }
 
 function listenToSelectStateForm () {
   let formEl = document.querySelector<HTMLFormElement>('#select-state-form')
   formEl?.addEventListener('submit', function (event) {
     event.preventDefault()
+    if (formEl === null) return
     let USState = formEl['select-state'].value
     state.USState = USState
     getBreweriesForState()
